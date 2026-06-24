@@ -1,0 +1,40 @@
+============================================================
+T8 FHVHV Emergence — Job 16933018
+Node  : wn060.arnes.si
+Start : Tue Jun 23 11:11:12 AM CEST 2026
+============================================================
+Python: /d/hpc/projects/FRI/bigdata/students/sm_bv/.venv/bin/python (Python 3.11.4)
+============================================================
+T8: FHVHV Emergence Analysis
+============================================================
+  yellow: 7 parquet files
+  green: 7 parquet files
+  fhv: 7 parquet files
+  fhvhv: 7 parquet files
+
+[Aggregation] Monthly trips per service ...
+  yellow ... 84 months
+  green ... 84 months
+  fhv ... 84 months
+  fhvhv total ... 83 months
+
+[Aggregation] Monthly FHVHV trips by operator ...
+  83 months × 4 operators
+
+[Cache] Saved monthly_combined.csv  (84 months)
+
+[Summary]
+  Date range : 2019-01-01 → 2025-12-01
+  Months     : 84
+  FHVHV total vs. operator sum (median % diff): 0.00%
+
+[Plots] Generating ...
+  Saved 01_absolute_trends.png
+  Saved 02_market_share.png
+  Saved 03_indexed_trends.png
+  Saved 04_fhvhv_competition.png
+
+Done. Outputs in: /d/hpc/projects/FRI/bigdata/students/sm_bv/final_project/data/t8
+============================================================
+End   : Tue Jun 23 11:35:49 AM CEST 2026
+============================================================

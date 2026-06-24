@@ -1,0 +1,9 @@
+group,fare_amount_mean,tip_amount_mean,trip_distance_mean,fare_amount_mean_of_stds,tip_amount_mean_of_stds,trip_distance_mean_of_stds
+Bronx,18.686,0.288,4.498,3.318,0.163,1.168
+Brooklyn,20.738,0.703,4.322,6.517,0.66,1.922
+EWR,62.159,4.309,16.175,0.0,0.0,0.0
+Manhattan,20.105,1.424,4.048,9.755,1.519,2.739
+N/A,43.541,0.454,9.123,1.698,0.002,0.505
+Queens,23.844,1.143,6.43,6.873,0.828,2.374
+Staten Island,19.897,0.757,5.588,0.519,0.048,0.19
+Unknown,18.036,3.106,4.899,0.046,0.013,0.017

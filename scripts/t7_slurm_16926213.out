@@ -1,0 +1,325 @@
+============================================================
+T7 Demand Forecasting — Job 16926213
+Node    : wn045.arnes.si
+Start   : Mon Jun 22 10:59:55 PM CEST 2026
+============================================================
+Python  : /d/hpc/projects/FRI/bigdata/students/sm_bv/.venv/bin/python (Python 3.11.4)
+======================================================================
+T7: City-Wide On-Demand Transportation Demand Forecasting
+  Problem  : Predict hourly trips per zone (all 4 services)
+  Workers  : [2, 4, 8]
+  Train    : 2021–2023
+  Test     : 2024
+  Features : 21 (unified) / 20 (per-service)
+======================================================================
+
+[Preprocessing] Loading cached aggregated demand data...
+  18,103,153 zone-hour rows loaded.
+
+Dataset split:
+  Train : 13,500,016 zone-hour samples (2021–2023)
+  Test  : 4,603,137  zone-hour samples (2024)
+  RAM   : ~3706 MB — note: raw trip data (T5 inputs) is orders of magnitude larger; the Dask aggregation in preprocessing is what requires distributed memory.
+
+======================================================================
+EXPERIMENT: 2 WORKERS
+======================================================================
+  Dask dashboard: http://153.5.72.45:8787/status
+  2/2 workers ready.
+Removing constant columns: ['temperature_c', 'pickup_event_count']
+
+  Train: 13,500,016  |  Test: 4,603,137  |  Features: 19 (of 21, 2 constant removed)  |  Mem: 9.87 GB
+
+────────────────────────────────────────────────────────────
+[SECTION A] UNIFIED MODEL — all services
+────────────────────────────────────────────────────────────
+
+  [Dask-ML LR | 2w] Training (13,500,016 rows)...
+  [Dask-ML LR (unified)]  RMSE=99.92  MAE=51.26  R²=0.0172
+    Time: 27.2s  |  Mem Δ: 2.92 GB
+
+  [XGBoost/Dask | 2w] Training (13,500,016 rows, 200 rounds)...
+[23:03:05] [0]	train-rmse:1.59415
+[23:03:15] [50]	train-rmse:0.59692
+[23:03:26] [100]	train-rmse:0.50467
+[23:03:40] [150]	train-rmse:0.46243
+[23:03:49] [199]	train-rmse:0.43279
+  [XGBoost (unified)]  RMSE=46.25  MAE=17.57  R²=0.7894
+    Time: 53.9s  |  Mem Δ: 2.85 GB
+
+  [SGD partial_fit] Training (13,500,016 rows, 5 epochs, chunk=200,000)...
+    Epoch 1/5  RMSE(log)=1.63190
+    Epoch 2/5  RMSE(log)=1.87545
+    Epoch 3/5  RMSE(log)=1.59197
+    Epoch 4/5  RMSE(log)=1.60865
+    Epoch 5/5  RMSE(log)=1.64623
+  [SGD partial_fit (unified)]  RMSE=104.89  MAE=54.71  R²=-0.0830
+    Time: 23.5s  |  Mem Δ: 1.65 GB
+
+────────────────────────────────────────────────────────────
+[SECTION B] SEPARATE MODELS — per-service XGBoost
+────────────────────────────────────────────────────────────
+
+  [XGBoost/Dask | 2w] Training (2,735,722 rows, 150 rounds)...
+[23:04:19] [0]	train-rmse:1.55320
+[23:04:23] [50]	train-rmse:0.53381
+[23:04:25] [100]	train-rmse:0.46104
+[23:04:28] [149]	train-rmse:0.42821
+  [XGBoost (yellow)]  RMSE=32.52  MAE=12.30  R²=0.8135
+    Time: 11.2s  |  Mem Δ: 0.27 GB
+
+  [XGBoost/Dask | 2w] Training (938,819 rows, 150 rounds)...
+[23:04:30] [0]	train-rmse:0.57316
+[23:04:31] [50]	train-rmse:0.31880
+[23:04:32] [100]	train-rmse:0.30543
+[23:04:33] [149]	train-rmse:0.29956
+  [XGBoost (green)]  RMSE=2.62  MAE=1.30  R²=0.7856
+    Time: 3.5s  |  Mem Δ: 0.09 GB
+
+  [XGBoost/Dask | 2w] Training (3,217,132 rows, 150 rounds)...
+[23:04:36] [0]	train-rmse:0.53967
+[23:04:40] [50]	train-rmse:0.42604
+[23:04:42] [100]	train-rmse:0.40328
+[23:04:45] [149]	train-rmse:0.39102
+  [XGBoost (fhv)]  RMSE=2.62  MAE=1.56  R²=0.3560
+    Time: 12.2s  |  Mem Δ: 0.56 GB
+
+  [XGBoost/Dask | 2w] Training (6,608,343 rows, 150 rounds)...
+[23:04:50] [0]	train-rmse:1.18166
+[23:04:57] [50]	train-rmse:0.50412
+[23:05:02] [100]	train-rmse:0.39622
+[23:05:07] [149]	train-rmse:0.35014
+  [XGBoost (fhvhv)]  RMSE=55.54  MAE=25.54  R²=0.7786
+    Time: 21.3s  |  Mem Δ: 1.32 GB
+
+  [4-separate combined]  RMSE=41.60  MAE=15.57  R²=0.8296
+
+────────────────────────────────────────────────────────────
+[SECTION C] AUGMENTATION IMPACT (XGBoost unified)
+────────────────────────────────────────────────────────────
+
+  [XGBoost/Dask | 2w] Training (13,500,016 rows, 150 rounds)...
+[23:05:13] [0]	train-rmse:1.68968
+[23:05:21] [50]	train-rmse:0.86819
+[23:05:30] [100]	train-rmse:0.75570
+[23:05:37] [149]	train-rmse:0.69748
+  [XGBoost (no augmentation)]  RMSE=68.42  MAE=29.08  R²=0.5391
+    Time: 30.0s  |  Mem Δ: 1.74 GB
+
+  Total experiment time (2 workers): 191.2s
+  results.json updated (2w done)
+
+======================================================================
+EXPERIMENT: 4 WORKERS
+======================================================================
+  Dask dashboard: http://153.5.72.45:8787/status
+  4/4 workers ready.
+Removing constant columns: ['temperature_c', 'pickup_event_count']
+
+  Train: 13,500,016  |  Test: 4,603,137  |  Features: 19 (of 21, 2 constant removed)  |  Mem: 8.57 GB
+
+────────────────────────────────────────────────────────────
+[SECTION A] UNIFIED MODEL — all services
+────────────────────────────────────────────────────────────
+
+  [Dask-ML LR | 4w] Training (13,500,016 rows)...
+  [Dask-ML LR (unified)]  RMSE=99.89  MAE=51.25  R²=0.0177
+    Time: 11.0s  |  Mem Δ: 2.90 GB
+
+  [XGBoost/Dask | 4w] Training (13,500,016 rows, 200 rounds)...
+[23:06:20] [0]	train-rmse:1.59415
+[23:06:28] [50]	train-rmse:0.59661
+[23:06:33] [100]	train-rmse:0.50509
+[23:06:38] [150]	train-rmse:0.46158
+[23:06:43] [199]	train-rmse:0.43410
+  [XGBoost (unified)]  RMSE=46.26  MAE=17.60  R²=0.7893
+    Time: 35.5s  |  Mem Δ: 2.85 GB
+
+  [SGD partial_fit] Training (13,500,016 rows, 5 epochs, chunk=200,000)...
+    Epoch 1/5  RMSE(log)=1.63190
+    Epoch 2/5  RMSE(log)=1.87545
+    Epoch 3/5  RMSE(log)=1.59197
+    Epoch 4/5  RMSE(log)=1.60865
+    Epoch 5/5  RMSE(log)=1.64623
+  [SGD partial_fit (unified)]  RMSE=104.89  MAE=54.71  R²=-0.0830
+    Time: 22.8s  |  Mem Δ: 1.64 GB
+
+────────────────────────────────────────────────────────────
+[SECTION B] SEPARATE MODELS — per-service XGBoost
+────────────────────────────────────────────────────────────
+
+  [XGBoost/Dask | 4w] Training (2,735,722 rows, 150 rounds)...
+[23:07:19] [0]	train-rmse:1.55319
+[23:07:20] [50]	train-rmse:0.53374
+[23:07:22] [100]	train-rmse:0.46134
+[23:07:24] [149]	train-rmse:0.42932
+  [XGBoost (yellow)]  RMSE=33.01  MAE=12.49  R²=0.8078
+    Time: 7.9s  |  Mem Δ: 0.27 GB
+
+  [XGBoost/Dask | 4w] Training (938,819 rows, 150 rounds)...
+[23:07:26] [0]	train-rmse:0.57321
+[23:07:27] [50]	train-rmse:0.31898
+[23:07:28] [100]	train-rmse:0.30559
+[23:07:28] [149]	train-rmse:0.29955
+  [XGBoost (green)]  RMSE=2.60  MAE=1.30  R²=0.7896
+    Time: 2.7s  |  Mem Δ: 0.01 GB
+
+  [XGBoost/Dask | 4w] Training (3,217,132 rows, 150 rounds)...
+[23:07:31] [0]	train-rmse:0.53969
+[23:07:32] [50]	train-rmse:0.42487
+[23:07:34] [100]	train-rmse:0.40378
+[23:07:35] [149]	train-rmse:0.39162
+  [XGBoost (fhv)]  RMSE=2.61  MAE=1.56  R²=0.3618
+    Time: 7.3s  |  Mem Δ: 0.70 GB
+
+  [XGBoost/Dask | 4w] Training (6,608,343 rows, 150 rounds)...
+[23:07:40] [0]	train-rmse:1.18166
+[23:07:44] [50]	train-rmse:0.50325
+[23:07:47] [100]	train-rmse:0.39121
+[23:07:49] [149]	train-rmse:0.35086
+  [XGBoost (fhvhv)]  RMSE=55.45  MAE=25.54  R²=0.7793
+    Time: 12.6s  |  Mem Δ: 1.36 GB
+
+  [4-separate combined]  RMSE=41.63  MAE=15.61  R²=0.8294
+
+────────────────────────────────────────────────────────────
+[SECTION C] AUGMENTATION IMPACT (XGBoost unified)
+────────────────────────────────────────────────────────────
+
+  [XGBoost/Dask | 4w] Training (13,500,016 rows, 150 rounds)...
+[23:07:56] [0]	train-rmse:1.68968
+[23:08:01] [50]	train-rmse:0.87543
+[23:08:05] [100]	train-rmse:0.76678
+[23:08:10] [149]	train-rmse:0.69253
+  [XGBoost (no augmentation)]  RMSE=68.82  MAE=29.09  R²=0.5338
+    Time: 19.4s  |  Mem Δ: 1.66 GB
+
+  Total experiment time (4 workers): 130.9s
+  results.json updated (4w done)
+
+======================================================================
+EXPERIMENT: 8 WORKERS
+======================================================================
+  Dask dashboard: http://153.5.72.45:8787/status
+  5/8 workers ready.
+Removing constant columns: ['temperature_c', 'pickup_event_count']
+
+  Train: 13,500,016  |  Test: 4,603,137  |  Features: 19 (of 21, 2 constant removed)  |  Mem: 9.74 GB
+
+────────────────────────────────────────────────────────────
+[SECTION A] UNIFIED MODEL — all services
+────────────────────────────────────────────────────────────
+
+  [Dask-ML LR | 8w] Training (13,500,016 rows)...
+  [Dask-ML LR (unified)]  RMSE=99.89  MAE=51.25  R²=0.0177
+    Time: 17.1s  |  Mem Δ: 2.49 GB
+
+  [XGBoost/Dask | 8w] Training (13,500,016 rows, 200 rounds)...
+[23:08:52] [0]	train-rmse:1.59415
+[23:09:13] [50]	train-rmse:0.59633
+[23:09:40] [100]	train-rmse:0.50344
+[23:09:48] [150]	train-rmse:0.46221
+[23:09:59] [199]	train-rmse:0.43865
+  [XGBoost (unified)]  RMSE=46.68  MAE=17.83  R²=0.7855
+    Time: 78.5s  |  Mem Δ: 1.43 GB
+
+  [SGD partial_fit] Training (13,500,016 rows, 5 epochs, chunk=200,000)...
+    Epoch 1/5  RMSE(log)=1.63190
+    Epoch 2/5  RMSE(log)=1.87545
+    Epoch 3/5  RMSE(log)=1.59197
+    Epoch 4/5  RMSE(log)=1.60865
+    Epoch 5/5  RMSE(log)=1.64623
+  [SGD partial_fit (unified)]  RMSE=104.89  MAE=54.71  R²=-0.0830
+    Time: 24.1s  |  Mem Δ: 1.64 GB
+
+────────────────────────────────────────────────────────────
+[SECTION B] SEPARATE MODELS — per-service XGBoost
+────────────────────────────────────────────────────────────
+
+  [XGBoost/Dask | 8w] Training (2,735,722 rows, 150 rounds)...
+[23:10:33] [0]	train-rmse:1.55318
+[23:10:35] [50]	train-rmse:0.53527
+[23:10:36] [100]	train-rmse:0.46354
+[23:10:37] [149]	train-rmse:0.42879
+  [XGBoost (yellow)]  RMSE=32.64  MAE=12.33  R²=0.8121
+    Time: 6.1s  |  Mem Δ: 0.40 GB
+
+  [XGBoost/Dask | 8w] Training (938,819 rows, 150 rounds)...
+[23:10:40] [0]	train-rmse:0.57318
+[23:10:40] [50]	train-rmse:0.31866
+[23:10:41] [100]	train-rmse:0.30564
+[23:10:42] [149]	train-rmse:0.29983
+  [XGBoost (green)]  RMSE=2.60  MAE=1.30  R²=0.7896
+    Time: 3.1s  |  Mem Δ: 0.00 GB
+
+  [XGBoost/Dask | 8w] Training (3,217,132 rows, 150 rounds)...
+[23:10:44] [0]	train-rmse:0.53969
+[23:10:45] [50]	train-rmse:0.42557
+[23:10:46] [100]	train-rmse:0.40427
+[23:10:47] [149]	train-rmse:0.39218
+  [XGBoost (fhv)]  RMSE=2.61  MAE=1.56  R²=0.3597
+    Time: 6.1s  |  Mem Δ: 0.44 GB
+
+  [XGBoost/Dask | 8w] Training (6,608,343 rows, 150 rounds)...
+[23:10:52] [0]	train-rmse:1.18167
+[23:10:55] [50]	train-rmse:0.50581
+[23:10:57] [100]	train-rmse:0.40270
+[23:10:59] [149]	train-rmse:0.35480
+  [XGBoost (fhvhv)]  RMSE=55.88  MAE=25.82  R²=0.7758
+    Time: 10.1s  |  Mem Δ: 1.18 GB
+
+  [4-separate combined]  RMSE=41.84  MAE=15.71  R²=0.8277
+
+────────────────────────────────────────────────────────────
+[SECTION C] AUGMENTATION IMPACT (XGBoost unified)
+────────────────────────────────────────────────────────────
+
+  [XGBoost/Dask | 8w] Training (13,500,016 rows, 150 rounds)...
+[23:11:04] [0]	train-rmse:1.68968
+[23:11:07] [50]	train-rmse:0.87526
+[23:11:09] [100]	train-rmse:0.75840
+[23:11:12] [149]	train-rmse:0.68630
+  [XGBoost (no augmentation)]  RMSE=68.07  MAE=28.82  R²=0.5439
+    Time: 16.1s  |  Mem Δ: 1.66 GB
+
+  Total experiment time (8 workers): 169.9s
+  results.json updated (8w done)
+
+[Plots] Generating...
+  Saved model_comparison.png
+  Saved unified_vs_separate.png
+  Saved scalability.png
+  Saved memory_vs_workers.png
+  Saved augmentation_impact.png
+  Saved sgd_convergence.png
+  Saved feature_importance.png
+
+  === RESULTS TABLE ===
+                            Model                Algorithm  Workers       RMSE       MAE        R²  Time (s)  Mem Δ (GB)
+             Dask-ML LR (unified) Dask-ML LinearRegression        8  99.894066 51.247956  0.017652 17.133507    2.494292
+                XGBoost (unified)             XGBoost/Dask        8  46.682889 17.834474  0.785463 78.518032    1.430876
+        SGD partial_fit (unified) SGDRegressor+partial_fit        1 104.886300 54.706530 -0.082988 24.068011    1.642000
+                 XGBoost (yellow)             XGBoost/Dask        8  32.638220 12.330061  0.812100  6.117881    0.400482
+                  XGBoost (green)             XGBoost/Dask        8   2.598266  1.300175  0.789568  3.066969    0.000000
+                    XGBoost (fhv)             XGBoost/Dask        8   2.611603  1.557325  0.359726  6.113354    0.439874
+                  XGBoost (fhvhv)             XGBoost/Dask        8  55.882012 25.816937  0.775819 10.132165    1.184944
+XGBoost (4 separate — aggregated)    XGBoost/Dask separate        8  41.841780 15.708315  0.827652       NaN         NaN
+        XGBoost (no augmentation)             XGBoost/Dask        8  68.066286 28.824079  0.543910 16.067701    1.659101
+
+======================================================================
+FINAL SUMMARY
+======================================================================
+  XGBoost (green)                                          RMSE=   2.60  MAE=   1.30  R²=+0.7896  Time=3s
+  XGBoost (fhv)                                            RMSE=   2.61  MAE=   1.56  R²=+0.3597  Time=6s
+  XGBoost (yellow)                                         RMSE=  32.64  MAE=  12.33  R²=+0.8121  Time=6s
+  XGBoost (4 separate — aggregated)                        RMSE=  41.84  MAE=  15.71  R²=+0.8277  Time=0s
+  XGBoost (unified)                                        RMSE=  46.68  MAE=  17.83  R²=+0.7855  Time=79s
+  XGBoost (fhvhv)                                          RMSE=  55.88  MAE=  25.82  R²=+0.7758  Time=10s
+  XGBoost (no augmentation)                                RMSE=  68.07  MAE=  28.82  R²=+0.5439  Time=16s
+  Dask-ML LR (unified)                                     RMSE=  99.89  MAE=  51.25  R²=+0.0177  Time=17s
+  SGD partial_fit (unified)                                RMSE= 104.89  MAE=  54.71  R²=-0.0830  Time=24s
+
+Done.
+============================================================
+End     : Mon Jun 22 11:11:25 PM CEST 2026
+============================================================

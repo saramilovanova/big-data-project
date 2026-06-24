@@ -1,0 +1,353 @@
+[
+  {
+    "n_workers": 2,
+    "metrics": [
+      {
+        "label": "Dask-ML LR (unified)",
+        "rmse": 99.9183712680116,
+        "mae": 51.25624951370233,
+        "r2": 0.01717372760432523,
+        "algorithm": "Dask-ML LinearRegression",
+        "n_workers": 2,
+        "time_s": 27.175539255142212,
+        "memory_delta_gb": 2.9173514239999996
+      },
+      {
+        "label": "XGBoost (unified)",
+        "rmse": 46.25210664976597,
+        "mae": 17.567447630849642,
+        "r2": 0.7894044928206511,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 2,
+        "time_s": 53.899991035461426,
+        "memory_delta_gb": 2.8499681280000004,
+        "n_rounds": 200,
+        "augmentation_used": true
+      },
+      {
+        "label": "SGD partial_fit (unified)",
+        "rmse": 104.88629992793999,
+        "mae": 54.706529920413374,
+        "r2": -0.08298787702863653,
+        "algorithm": "SGDRegressor+partial_fit",
+        "n_workers": 1,
+        "time_s": 23.539716005325317,
+        "memory_delta_gb": 1.6506347519999984,
+        "n_epochs": 5,
+        "n_chunks": 68,
+        "chunk_size": 200000,
+        "epoch_log_rmses": [
+          1.631901836376774,
+          1.875451835932988,
+          1.5919659612750636,
+          1.6086540581230577,
+          1.6462318352820111
+        ]
+      },
+      {
+        "label": "XGBoost (yellow)",
+        "rmse": 32.517942097612526,
+        "mae": 12.301466891440203,
+        "r2": 0.8134818842905753,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 2,
+        "time_s": 11.247464656829834,
+        "memory_delta_gb": 0.269447168000001,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (green)",
+        "rmse": 2.6227241050664114,
+        "mae": 1.303108464885447,
+        "r2": 0.7855875806047897,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 2,
+        "time_s": 3.467072010040283,
+        "memory_delta_gb": 0.0918937599999996,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (fhv)",
+        "rmse": 2.619244811309802,
+        "mae": 1.5589892474088176,
+        "r2": 0.3559729249397042,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 2,
+        "time_s": 12.203307390213013,
+        "memory_delta_gb": 0.556216319999999,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (fhvhv)",
+        "rmse": 55.538619920012145,
+        "mae": 25.543360863458272,
+        "r2": 0.7785659003278577,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 2,
+        "time_s": 21.307166576385498,
+        "memory_delta_gb": 1.3210951679999994,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (4 separate \u2014 aggregated)",
+        "algorithm": "XGBoost/Dask separate",
+        "n_workers": 2,
+        "rmse": 41.59959840334798,
+        "mae": 15.570577440407309,
+        "r2": 0.829641290696076
+      },
+      {
+        "label": "XGBoost (no augmentation)",
+        "rmse": 68.42083182134171,
+        "mae": 29.07594305393455,
+        "r2": 0.539146633250949,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 2,
+        "time_s": 29.968860149383545,
+        "memory_delta_gb": 1.7379368960000008,
+        "n_rounds": 150,
+        "augmentation_used": false
+      }
+    ],
+    "scalability": {
+      "total_time_s": 191.22726964950562,
+      "start_memory_gb": 9.871310848,
+      "final_memory_gb": 15.542411264,
+      "n_workers": 2
+    }
+  },
+  {
+    "n_workers": 4,
+    "metrics": [
+      {
+        "label": "Dask-ML LR (unified)",
+        "rmse": 99.88979764534442,
+        "mae": 51.246504190113384,
+        "r2": 0.01773576422019074,
+        "algorithm": "Dask-ML LinearRegression",
+        "n_workers": 4,
+        "time_s": 10.984382629394531,
+        "memory_delta_gb": 2.9006479360000004
+      },
+      {
+        "label": "XGBoost (unified)",
+        "rmse": 46.262177745778004,
+        "mae": 17.60159098844728,
+        "r2": 0.789312771226317,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 4,
+        "time_s": 35.48525857925415,
+        "memory_delta_gb": 2.8490874879999986,
+        "n_rounds": 200,
+        "augmentation_used": true
+      },
+      {
+        "label": "SGD partial_fit (unified)",
+        "rmse": 104.88629992793999,
+        "mae": 54.706529920413374,
+        "r2": -0.08298787702863653,
+        "algorithm": "SGDRegressor+partial_fit",
+        "n_workers": 1,
+        "time_s": 22.778679370880127,
+        "memory_delta_gb": 1.6420003839999993,
+        "n_epochs": 5,
+        "n_chunks": 68,
+        "chunk_size": 200000,
+        "epoch_log_rmses": [
+          1.631901836376774,
+          1.875451835932988,
+          1.5919659612750636,
+          1.6086540581230577,
+          1.6462318352820111
+        ]
+      },
+      {
+        "label": "XGBoost (yellow)",
+        "rmse": 33.012406301080894,
+        "mae": 12.488947457768166,
+        "r2": 0.8077664103889608,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 4,
+        "time_s": 7.876429796218872,
+        "memory_delta_gb": 0.265068544,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (green)",
+        "rmse": 2.5977678721183417,
+        "mae": 1.2998722331561328,
+        "r2": 0.7896486011367136,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 4,
+        "time_s": 2.749138593673706,
+        "memory_delta_gb": 0.010506239999999778,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (fhv)",
+        "rmse": 2.607453044173013,
+        "mae": 1.5572302924570174,
+        "r2": 0.361758655841126,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 4,
+        "time_s": 7.251157283782959,
+        "memory_delta_gb": 0.703995904000001,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (fhvhv)",
+        "rmse": 55.44673366660507,
+        "mae": 25.544697998911243,
+        "r2": 0.77929800056421,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 4,
+        "time_s": 12.611842632293701,
+        "memory_delta_gb": 1.358024704,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (4 separate \u2014 aggregated)",
+        "algorithm": "XGBoost/Dask separate",
+        "n_workers": 4,
+        "rmse": 41.630199192240084,
+        "mae": 15.613908487283446,
+        "r2": 0.8293905657617267
+      },
+      {
+        "label": "XGBoost (no augmentation)",
+        "rmse": 68.81792271672748,
+        "mae": 29.0856479610184,
+        "r2": 0.5337818428050324,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 4,
+        "time_s": 19.371652603149414,
+        "memory_delta_gb": 1.6588759039999985,
+        "n_rounds": 150,
+        "augmentation_used": false
+      }
+    ],
+    "scalability": {
+      "total_time_s": 130.85711860656738,
+      "start_memory_gb": 8.57163776,
+      "final_memory_gb": 16.78592,
+      "n_workers": 4
+    }
+  },
+  {
+    "n_workers": 8,
+    "metrics": [
+      {
+        "label": "Dask-ML LR (unified)",
+        "rmse": 99.89406586870537,
+        "mae": 51.24795563114917,
+        "r2": 0.0176518194564923,
+        "algorithm": "Dask-ML LinearRegression",
+        "n_workers": 8,
+        "time_s": 17.133507251739502,
+        "memory_delta_gb": 2.4942919680000006
+      },
+      {
+        "label": "XGBoost (unified)",
+        "rmse": 46.682889000706695,
+        "mae": 17.834474181693775,
+        "r2": 0.7854633402291415,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 8,
+        "time_s": 78.51803207397461,
+        "memory_delta_gb": 1.4308761600000004,
+        "n_rounds": 200,
+        "augmentation_used": true
+      },
+      {
+        "label": "SGD partial_fit (unified)",
+        "rmse": 104.88629992793999,
+        "mae": 54.706529920413374,
+        "r2": -0.08298787702863653,
+        "algorithm": "SGDRegressor+partial_fit",
+        "n_workers": 1,
+        "time_s": 24.068011045455933,
+        "memory_delta_gb": 1.6420003839999993,
+        "n_epochs": 5,
+        "n_chunks": 68,
+        "chunk_size": 200000,
+        "epoch_log_rmses": [
+          1.631901836376774,
+          1.875451835932988,
+          1.5919659612750636,
+          1.6086540581230577,
+          1.6462318352820111
+        ]
+      },
+      {
+        "label": "XGBoost (yellow)",
+        "rmse": 32.63822033986341,
+        "mae": 12.330061106086658,
+        "r2": 0.8120995359911668,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 8,
+        "time_s": 6.117880821228027,
+        "memory_delta_gb": 0.40048230399999873,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (green)",
+        "rmse": 2.5982664914007922,
+        "mae": 1.3001752473511765,
+        "r2": 0.789567843090082,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 8,
+        "time_s": 3.066969156265259,
+        "memory_delta_gb": 0.0,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (fhv)",
+        "rmse": 2.611602800156283,
+        "mae": 1.5573254483722327,
+        "r2": 0.35972551977361,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 8,
+        "time_s": 6.113353729248047,
+        "memory_delta_gb": 0.43987353600000034,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (fhvhv)",
+        "rmse": 55.88201202482997,
+        "mae": 25.816937196293537,
+        "r2": 0.7758192064703558,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 8,
+        "time_s": 10.132164716720581,
+        "memory_delta_gb": 1.184944127999998,
+        "n_rounds": 150
+      },
+      {
+        "label": "XGBoost (4 separate \u2014 aggregated)",
+        "algorithm": "XGBoost/Dask separate",
+        "n_workers": 8,
+        "rmse": 41.8417797979117,
+        "mae": 15.708315265213436,
+        "r2": 0.8276519539288905
+      },
+      {
+        "label": "XGBoost (no augmentation)",
+        "rmse": 68.06628551644093,
+        "mae": 28.82407856957271,
+        "r2": 0.5439104022063781,
+        "algorithm": "XGBoost/Dask",
+        "n_workers": 8,
+        "time_s": 16.06770133972168,
+        "memory_delta_gb": 1.6591011840000007,
+        "n_rounds": 150,
+        "augmentation_used": false
+      }
+    ],
+    "scalability": {
+      "total_time_s": 169.88379883766174,
+      "start_memory_gb": 9.742401536,
+      "final_memory_gb": 17.131798528,
+      "n_workers": 8
+    }
+  }
+]

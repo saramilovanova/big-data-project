@@ -1,0 +1,6 @@
+cluster_id,count_in_last_snapshot,trip_distance,fare_amount,tip_amount,total_amount,trip_duration_min,is_fhvhv,interpretation
+0,459978,9.729,38.584,9.21,57.075,30.711,0.752,"Mixed, long trip (~9.7 mi, ~$39 fare)"
+1,4241113,3.068,16.882,0.515,20.63,14.848,0.999,"FHVHV (Uber/Lyft), medium trip (~3.1 mi, ~$17 fare)"
+2,3246074,1.519,9.162,0.952,12.512,8.557,0.598,"Mixed, short local trip (~1.5 mi, ~$9 fare)"
+3,1851193,8.465,33.521,0.281,41.215,28.758,0.964,"FHVHV (Uber/Lyft), long trip (~8.5 mi, ~$34 fare)"
+4,428864,20.895,72.344,1.979,90.788,61.544,0.936,"FHVHV (Uber/Lyft), airport/outer-borough trip (~20.9 mi, ~$72 fare)"
