@@ -1,0 +1,90 @@
+# docker-compose.yml
+# version: '3.8'
+
+services:
+  broker1-kr:
+    image: confluentinc/cp-kafka:latest
+    platform: linux/amd64 # Specify ARM platform
+    container_name: broker1-kr
+    hostname: broker1-kr
+    ports:
+      - "10000:10000" # External listener port
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller' # Run as both broker and controller
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      # Listeners: PLAINTEXT for internal Docker network, CONTROLLER for KRaft, EXTERNAL for host access
+      KAFKA_LISTENERS: 'PLAINTEXT://broker1-kr:9092,CONTROLLER://broker1-kr:9093,EXTERNAL://0.0.0.0:10000'
+      # Advertised Listeners: How clients connect from different networks
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker1-kr:9092,EXTERNAL://localhost:10000'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker1-kr:9093,2@broker2-kr:9093' # KRaft quorum voters
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER' # Specify the listener for controller communication
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT' # Listener for broker-to-broker communication
+      CLUSTER_ID: 'yhBzcqq4TG2eNAgiuqsp4w' # IMPORTANT: Replace with your generated ID
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 # Replication factor for internal topics (match broker count)
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1 # Replication factor for transaction log
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2 # Minimum in-sync replicas for transaction log
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data' # Directory for Kafka logs
+      # BROKER/TOPIC DEFAULTS
+      KAFKA_LOG_RETENTION_MS: '21600000' # 6 hrs - long enough to cover a full producer run
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 2000
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true' # Explicitly enable auto topic creation
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    volumes:
+      - kafka1-kr-data:/var/lib/kafka/data # Persistent volume for broker 1 data
+
+  broker2-kr:
+    image: confluentinc/cp-kafka:latest
+    platform: linux/amd64 # Specify ARM platform
+    container_name: broker2-kr
+    hostname: broker2-kr
+    ports:
+      - "10001:10001" # External listener port
+    environment:
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: 'broker,controller' # Run as both broker and controller
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT'
+      KAFKA_LISTENERS: 'PLAINTEXT://broker2-kr:9092,CONTROLLER://broker2-kr:9093,EXTERNAL://0.0.0.0:10001'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker2-kr:9092,EXTERNAL://localhost:10001'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker1-kr:9093,2@broker2-kr:9093' # KRaft quorum voters
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      CLUSTER_ID: 'yhBzcqq4TG2eNAgiuqsp4w' # IMPORTANT: Use the SAME ID as broker1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 2
+      KAFKA_LOG_DIRS: '/var/lib/kafka/data'
+      # BROKER/TOPIC DEFAULTS
+      KAFKA_LOG_RETENTION_MS: '21600000' # 6 hrs - long enough to cover a full producer run
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 2000
+      KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    volumes:
+      - kafka2-kr-data:/var/lib/kafka/data # Persistent volume for broker 2 data
+
+  ksqldb-server-kr:
+    image: confluentinc/cp-ksqldb-server:latest
+    platform: linux/amd64 # Specify ARM platform
+    container_name: ksqldb-server-kr
+    hostname: ksqldb-server-kr
+    depends_on:
+      - broker1-kr
+      - broker2-kr
+    ports:
+      - "10002:8088" # ksqlDB server REST API port
+    environment:
+      KSQL_LISTENERS: 'http://0.0.0.0:8088' # Listener for ksqlDB server
+      # Point ksqlDB to the internal PLAINTEXT listeners of the brokers
+      KSQL_BOOTSTRAP_SERVERS: 'broker1-kr:9092,broker2-kr:9092'
+      KSQL_KSQL_SERVICE_ID: 'ksqldb-service-kr_' # Unique ID for this ksqlDB service (trailing underscore is important)
+      KSQL_KSQL_LOGGING_PROCESSING_STREAM_AUTO_CREATE: 'true' # Auto-create internal topics
+      KSQL_KSQL_LOGGING_PROCESSING_TOPIC_AUTO_CREATE: 'true'
+      KSQL_KSQL_STREAMS_REPLICATION_FACTOR: 1 # Replication factor for ksqlDB internal topics
+      # ***** TELEMETRY *****
+      KSQL_CONFLUENT_SUPPORT_METRICS_ENABLE: 'false' # Disable Confluent telemetry reporting
+
+# Define persistent volumes
+volumes:
+  kafka1-kr-data:
+  kafka2-kr-data:
