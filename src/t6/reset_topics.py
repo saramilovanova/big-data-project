@@ -1,6 +1,4 @@
 """
-reset_topics.py
-
 Deletes and recreates all pipeline topics, so each run starts clean
 (no leftover messages or consumer-group offsets from a previous attempt).
 Run this before starting the producer for a fresh end-to-end run.

@@ -1,12 +1,8 @@
 """
-find_top_locations.py
-
 Recomputes the 10 most-active locations (pickups + dropoffs combined) from
 the combined Yellow+FHVHV 2021 source, since the hardcoded list left over
 from earlier tasks was based on Yellow Taxi alone and will shift once FHVHV
 (much higher trip volume) is mixed in.
-
-Run once, then paste the printed list into TOP10_LOCATIONS in config.py.
 """
 
 import duckdb

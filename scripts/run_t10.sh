@@ -1,21 +1,12 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# T10: City-Wide Demand Forecasting — GPU Edition
-# Arnes HPC SLURM submission script
-#
-# Unlike T7, this is a SINGLE-JOB submission — no worker sub-jobs.
-# LocalCUDACluster starts all GPU workers in-process on this node.
+# T10: City-Wide Demand Forecasting - GPU
 #
 # GPU allocation strategy:
 #   Request --gres=gpu:4 to target a 4-GPU node (gpu:4 line in sinfo).
 #   If the scheduler assigns a 2-GPU node instead, the Python script
 #   auto-detects the actual count via cp.cuda.runtime.getDeviceCount()
-#   and adjusts the sweep accordingly (1→2 instead of 1→2→4).
-#
-# Resource budget (4-GPU node):
-#   4 × Tesla V100S-32GB  = 128 GB VRAM total
-#   --cpus-per-task=16    = 4 CPU threads per GPU worker
-#   --mem=96GB            = CPU RAM for scheduler + 4 workers (24 GB each)
+#   and adjusts the sweep accordingly (1->2 instead of 1->2->4).
 #
 # Submit: sbatch run_t10.sh
 # ─────────────────────────────────────────────────────────────────────────────

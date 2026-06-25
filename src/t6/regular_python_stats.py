@@ -1,13 +1,8 @@
 """
-regular_python_stats.py
-
 Same rolling-window statistics as quix_streams.py, but implemented with
 plain Python + confluent-kafka only (manual tumbling-window accumulators),
 writing results to a separate pair of topics (TOPIC_PY_BOROUGH_STATS /
-TOPIC_PY_LOCATION_STATS). Keeping this on its own topics lets it run
-side-by-side with the Quix Streams pipeline without the two interfering,
-so results can be compared directly (see the "why separate topics" note in
-the project write-up).
+TOPIC_PY_LOCATION_STATS).
 """
 
 import json

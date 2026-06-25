@@ -1,6 +1,4 @@
 """
-basic_consumer.py
-
 Reads raw combined taxi trip events and prints them, for debugging/
 demonstrating the raw event flow before the rolling-stats and clustering
 pipelines.

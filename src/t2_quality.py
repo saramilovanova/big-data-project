@@ -4,8 +4,6 @@ T2: Data quality analysis of original TLC parquet files using Dask bags (map-red
 For each file: reads with pandas, detects quality issues, groups results by
 actual pickup year. Results are aggregated across files by (dataset, year) and
 saved to JSON.
-
-Run via: run_t2.sh  (SLURMCluster, 8 workers)
 """
 
 import os

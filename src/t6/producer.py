@@ -1,31 +1,7 @@
 """
-producer.py
-
 Streams the combined Yellow Taxi + FHVHV 2021 events (built by
 prepare_stream_source.py) into Kafka, one message per trip, in pickup-time
 order.
-
-Two things matter beyond the basic "read parquet, send to Kafka" prototype:
-
-1. Memory: the combined file can be tens of millions of rows, far more than
-   fits comfortably in pandas on a laptop. We stream it batch-by-batch with
-   pyarrow's iter_batches() instead of loading the whole file at once.
-
-2. Event time vs Kafka's own message timestamp: it's tempting to set each
-   Kafka message's timestamp to the trip's pickup_datetime so downstream
-   windowing "just works" off the Kafka record metadata. Don't -- Kafka's
-   time-based log retention also keys off that same metadata (it deletes a
-   segment once `now - largest_record_timestamp_in_segment > retention.ms`).
-   Since this data is from 2021, pickup_datetime is years in the past
-   relative to wall-clock "now," so a message timestamped with its own
-   pickup_datetime looks years "stale" to the broker the instant it's
-   written, and retention deletes it almost immediately -- regardless of how
-   long it's actually been sitting in the topic. Kafka message timestamps
-   are left to default to real send time here (correct for retention/ops
-   purposes); event time for windowing is instead read from the
-   pickup_datetime field already present in the JSON payload (see
-   quix_streams.py's timestamp_extractor). --speed lets you optionally
-   throttle production to simulate a chosen playback rate for a live demo.
 """
 
 import argparse

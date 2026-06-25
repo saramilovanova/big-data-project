@@ -1,6 +1,4 @@
 """
-analyze_results.py  ·  T6 Streaming Analytics Report
-
 Produces all tables and figures needed for the T6 section of the report:
   - Rolling descriptive statistics for boroughs (mean, std, min, max for
     trip_distance, fare_amount, tip_amount) -- Section 4 of the assignment

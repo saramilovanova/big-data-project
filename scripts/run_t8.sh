@@ -1,11 +1,6 @@
 #!/bin/bash
 # ─────────────────────────────────────────────────────────────────────────────
-# T8: FHVHV Emergence Analysis — SLURM submission
-#
-# Single-node job: DuckDB aggregation over T1 parquets + matplotlib plots.
-# No distributed workers needed — DuckDB parallelises internally on the
-# allocated cores. On re-runs the aggregation is skipped (cached CSV) and
-# only the plots are regenerated, finishing in under a minute.
+# T8: FHVHV Emergence Analysis
 #
 # Submit: sbatch run_t8.sh
 # ─────────────────────────────────────────────────────────────────────────────

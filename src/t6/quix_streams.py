@@ -1,6 +1,4 @@
 """
-quix_streams.py
-
 Consumes the combined taxi event stream and computes rolling (tumbling
 30-second window) descriptive statistics -- count, mean, std, min, max --
 for STATS_FIELDS (trip_distance, fare_amount, tip_amount), grouped by:
@@ -15,10 +13,6 @@ would otherwise treat 2021 trip data as years "stale" the instant it's
 written (see producer.py's docstring). Event time for windowing is instead
 extracted directly from the pickup_datetime field in the JSON payload via
 a custom timestamp_extractor passed to app.topic().
-
-Run one pipeline per terminal:
-    python quix_streams.py borough
-    python quix_streams.py location
 """
 
 import math

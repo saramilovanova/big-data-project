@@ -1,6 +1,4 @@
 """
-sinks.py
-
 Kafka topic retention (see docker-compose.yaml) is finite -- even at 6
 hours, it's not a place to permanently keep your results. Each consumer
 writes its output to a local JSON-lines file via JsonlWriter, in addition

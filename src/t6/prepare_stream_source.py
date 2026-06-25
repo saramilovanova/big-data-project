@@ -1,6 +1,4 @@
 """
-prepare_stream_source.py
-
 Builds the single source file the Kafka producer streams from:
   - reads T1 output (NOT T5-augmented files) for Yellow Taxi and FHVHV, year 2021
   - aligns both datasets onto one shared schema (column names + units differ
@@ -16,8 +14,6 @@ Builds the single source file the Kafka producer streams from:
     parquet file -- T6 explicitly requires events to be produced "ordered by
     pickup timestamp"
 
-Run once before starting the producer:
-    python prepare_stream_source.py
 """
 
 import duckdb
@@ -35,13 +31,10 @@ from config import (
 
 con = duckdb.connect()
 
-# Let DuckDB spill to disk instead of trying to hold everything in RAM.
 con.execute("PRAGMA memory_limit='4GB'")
 con.execute(f"PRAGMA temp_directory='{BASE_DIR / 'duckdb_tmp'}'")
 con.execute("PRAGMA threads=4")
 
-# DuckDB's COPY TO does not create missing directories -- make sure the
-# output folder exists before writing.
 Path(COMBINED_PARQUET).parent.mkdir(parents=True, exist_ok=True)
 
 con.execute(f"""
@@ -74,19 +67,6 @@ con.execute(f"""
 """)
 
 # --- FHVHV: same shared schema, different source column names -------------
-# Verified against the actual T1 column list/dtypes:
-#   trip_miles (double) -> trip_distance, base_passenger_fare (double) ->
-#   fare_amount, tips (double) -> tip_amount -- all line up directly.
-# total_amount has no direct FHVHV equivalent, so it's derived from the
-# itemized fare components (base fare + tolls + fees + tax + tips).
-# cbd_congestion_fee (NYC's congestion-pricing surcharge) is intentionally
-# left out: it didn't exist as a charge in 2021, so it would be 0/null for
-# every row in this year's data anyway.
-# Note for later reuse: Yellow's airport fee column is capitalized
-# "Airport_fee" while FHVHV's is lowercase "airport_fee" -- a real
-# inconsistency in the TLC schemas (the kind T2 asked you to watch for).
-# It doesn't bite here because Yellow's total_amount already bakes the fee
-# in directly, so neither dataset's airport-fee column needs to be touched.
 con.execute(f"""
     CREATE OR REPLACE TEMP VIEW fhvhv_unified AS
     SELECT

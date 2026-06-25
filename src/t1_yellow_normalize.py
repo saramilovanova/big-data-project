@@ -1,7 +1,7 @@
 """
 Yellow Taxi schema normalization.
 Renames all historical column variants to canonical names,
-merges Airport_fee → airport_fee, drops artifacts,
+merges Airport_fee -> airport_fee, drops artifacts,
 casts everything to target types, writes partitioned by year.
 """
 
@@ -21,7 +21,7 @@ PICKUP_COL   = "tpep_pickup_datetime"
 ROWS_PER_GROUP = 2_000_000
 BATCH_SIZE     = 200_000
 
-# ── Column rename map (old name → canonical name) ────────────────────────────
+# ── Column rename map (old name -> canonical name) ────────────────────────────
 
 RENAME_MAP = {
     # vendor
@@ -100,7 +100,7 @@ def normalize_batch(batch, file_year):
     batch = batch.rename_columns(new_names)
 
     # Step 2: merge Airport_fee into airport_fee (coalesce)
-    # After renaming both map to "airport_fee" — if duplicated, take first non-null
+    # After renaming both map to "airport_fee" - if duplicated, take first non-null
     if batch.schema.names.count("airport_fee") > 1:
         idx = [i for i, n in enumerate(batch.schema.names) if n == "airport_fee"]
         merged = pc.coalesce(*[batch.column(i) for i in idx])

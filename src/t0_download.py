@@ -2,7 +2,7 @@
 T0: Download missing TLC taxi files (2025-02 to 2026-02) using Dask Bags
 in a Map-Reduce manner.
 
-  MAP      : for each file → download it, extract schema (columns + dtypes)
+  MAP      : for each file -> download it, extract schema (columns + dtypes)
   REDUCE   : group by dataset prefix, accumulate list of schemas  (foldby)
   FINALIZER: compare schemas within each group, save to schema_comparison.json
 """

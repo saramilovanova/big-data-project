@@ -1,6 +1,4 @@
 """
-analyze_clusters.py
-
 Builds the clustering section of the T6 report from:
   - cluster_centres.jsonl: periodic snapshots of the 5 cluster centres
     (one record per 1000 events), showing how they evolved as the stream

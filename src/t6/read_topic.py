@@ -1,6 +1,4 @@
 """
-read_topic.py
-
 Quick debugging helper: read up to --limit messages from one of the
 pipeline's topics and pretty-print them.
 

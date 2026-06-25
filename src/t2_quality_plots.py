@@ -364,8 +364,6 @@ def make_quality_table(
     """
     Build and return a styled quality table for *ds_name*.
 
-    Call ``display(make_quality_table(df, ds_name))`` in Jupyter to render it.
-
     Parameters
     ----------
     df                : output of load_data()

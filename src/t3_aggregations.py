@@ -1,8 +1,7 @@
 """
-T3 aggregations — optimised.
+T3 aggregations.
 One combined temporal scan per dataset (year+month+hour+dow in a single pass).
-One zone+fare scan per dataset.
-~8 total DuckDB scans instead of 26. Estimated runtime: 20-40 min.
+One zone+fare scan per dataset. ~8 total DuckDB scans. 
 """
 
 import zipfile, urllib.request
@@ -453,8 +452,6 @@ axes[1].set_title("Average Distance by Year"); axes[1].set_ylabel("Miles")
 for ax in axes: ax.legend(); ax.grid(True, alpha=0.3)
 plt.tight_layout(); savefig("fare_distance")
 
-
-# yellow_duration skipped (not required)
 
 print(f"\nDone. All results in {OUT_DIR}", flush=True)
 print(f"Plots saved to {PLOTS_DIR}", flush=True)

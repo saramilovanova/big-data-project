@@ -1,20 +1,10 @@
 """
-stream_clustering.py  (fixed for disk-space efficiency)
-
 Consumes the combined taxi event stream, applies online (incremental)
 K-Means clustering trip-by-trip, and:
   - writes EVERY cluster assignment to a local JSONL file (for the report)
   - sends only periodic CLUSTER-CENTRE SNAPSHOTS to the taxi-clusters Kafka
     topic (not one message per event -- that mirrored the full raw stream
     and consumed 5+ GB of disk for a 16.5M-event run)
-
-Why the change?
-  The previous version did `producer.produce(TOPIC_CLUSTERS, ..., value=payload)`
-  for each of the ~16.5M events, creating a taxi-clusters topic that was just
-  as large as the raw topic.  The T6 requirement is to *apply* stream clustering
-  to the data -- it doesn't require storing every individual cluster assignment
-  back in Kafka.  Periodic centre snapshots (tiny) fulfil the "write processed
-  data back to Kafka" requirement while using negligible disk space.
 """
 
 import json

@@ -1,18 +1,17 @@
 """
 T8: FHVHV Emergence — Impact on Taxis and Smaller Competitors
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Calculates and visualises how the rise of FHVHV operators (Uber, Lyft)
 affected Yellow and Green taxi services and smaller FHVHV rivals (Juno, Via),
 in both absolute trip counts and relative market share.
 
 FHVHV license codes (hvfhs_license_num):
-  HV0002 → Juno   (exited NYC market mid-2019)
-  HV0003 → Uber
-  HV0004 → Via
-  HV0005 → Lyft
+  HV0002 -> Juno   (exited NYC market mid-2019)
+  HV0003 -> Uber
+  HV0004 -> Via
+  HV0005 -> Lyft
 
-Aggregation: DuckDB over T1 partitioned parquets → monthly totals.
+Aggregation: DuckDB over T1 partitioned parquets -> monthly totals.
 All results cached to CSV so re-running plots is instant.
 
 Outputs (data/t8/):
@@ -60,7 +59,7 @@ VALID_YEARS = {
     "fhvhv":  range(2019, 2026),
 }
 
-# FHVHV license → company name
+# FHVHV license -> company name
 LICENSE_MAP = {"HV0002": "Juno", "HV0003": "Uber", "HV0004": "Via", "HV0005": "Lyft"}
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -451,7 +450,7 @@ def main():
     df = aggregate_all()
 
     print("\n[Summary]", flush=True)
-    print(f"  Date range : {df['date'].min().date()} → {df['date'].max().date()}")
+    print(f"  Date range : {df['date'].min().date()} -> {df['date'].max().date()}")
     print(f"  Months     : {len(df)}")
 
     # Sanity check: FHVHV total ≈ Uber+Lyft+Via+Juno

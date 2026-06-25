@@ -1,6 +1,5 @@
 """
 T7: City-Wide On-Demand Transportation Demand Forecasting
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Problem Statement (suggestion e):
   Predict hourly trip counts per taxi zone across all 4 NYC TLC datasets
@@ -9,7 +8,7 @@ Problem Statement (suggestion e):
 
   A unified model (all services + service_type feature) is compared against
   4 separate per-service models, evaluating whether cross-service patterns
-  (e.g. the COVID-19 shift from Yellow → FHVHV observed in T3 EDA) add
+  (e.g. the COVID-19 shift from Yellow -> FHVHV observed in T3 EDA) add
   predictive value.
 
   Augmentation impact is also measured: baseline (time + zone features only)
@@ -152,15 +151,11 @@ LOG_TARGET = "log_trip_count"
 def aggregate_service(service: str, conf: dict, years: list) -> pd.DataFrame | None:
     """
     Load T5-augmented trip-level parquets for one service using Dask,
-    aggregate to (PULocationID, year, month, day, hour) → trip_count + features.
+    aggregate to (PULocationID, year, month, day, hour) -> trip_count + features.
 
     This is the distributed step: raw augmented data easily exceeds a single
     worker's RAM (Yellow alone is >100 GB across all years), so Dask reads
     and aggregates lazily across partitions.
-
-    Fix vs. original draft: a dedicated "_count" column (value=1, sum-aggregated)
-    is used for trip counting so that no weather/spatial column is silently
-    lost by being used as the count proxy.
     """
     pcol   = conf["pcol"]
     pu_col = conf["pu_col"]
@@ -210,8 +205,6 @@ def aggregate_service(service: str, conf: dict, years: list) -> pd.DataFrame | N
         ddf = ddf[ddf["year"] == year]
 
         # ── Add a dedicated trip counter column ───────────────────────────
-        # Using a dedicated _count=1 column (summed per group) avoids the
-        # original bug of repurposing a weather column as the trip counter.
         ddf["_count"] = 1
 
         # Select only the columns we need (minimise data shuffle)
@@ -222,9 +215,9 @@ def aggregate_service(service: str, conf: dict, years: list) -> pd.DataFrame | N
         ddf = ddf[[c for c in keep if c in ddf.columns]]
 
         # Aggregate:
-        #   - _count   → sum  (total trips in zone-hour)
-        #   - weather  → first  (city-wide: same for every zone in that hour)
-        #   - spatial  → first  (constant per zone; stable across time)
+        #   - _count   -> sum  (total trips in zone-hour)
+        #   - weather  -> first  (city-wide: same for every zone in that hour)
+        #   - spatial  -> first  (constant per zone; stable across time)
         agg_spec = {"_count": "sum"}
         for c in available_weather + available_spatial:
             agg_spec[c] = "first"
@@ -259,7 +252,7 @@ def build_demand_dataset() -> pd.DataFrame:
         print(f"  {len(df):,} zone-hour rows loaded.", flush=True)
         return df
 
-    print("\n[Preprocessing] Aggregating trips → zone-hour demand (all services)...",
+    print("\n[Preprocessing] Aggregating trips -> zone-hour demand (all services)...",
           flush=True)
     all_parts = []
 
@@ -275,7 +268,7 @@ def build_demand_dataset() -> pd.DataFrame:
 
     df = pd.concat(all_parts, ignore_index=True)
     df.to_parquet(str(cache_file), index=False)
-    print(f"\n  Cached → {cache_file.name} ({len(df):,} rows)", flush=True)
+    print(f"\n  Cached -> {cache_file.name} ({len(df):,} rows)", flush=True)
     return df
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -359,7 +352,7 @@ def eval_metrics(y_true_log: np.ndarray, y_pred_log: np.ndarray,
                  label: str = "") -> dict:
     """
     Evaluate on the original scale (expm1 of log predictions).
-    Returns RMSE, MAE, R² in units of trips/hour.
+    Returns RMSE, MAE, R^2 in units of trips/hour.
     """
     y_pred = np.maximum(np.expm1(np.asarray(y_pred_log, dtype=np.float64)), 0)
     y_true = np.expm1(np.asarray(y_true_log, dtype=np.float64))
@@ -603,9 +596,9 @@ def run_all(client, n_workers: int,
             test_df:  pd.DataFrame) -> dict:
     """
     Run the full ML pipeline for a given number of Dask workers:
-      • All 3 algorithms on the unified model (Section A)
-      • Per-service separate XGBoost models (Section B)
-      • Augmentation impact: with vs. without T5 features (Section C)
+      - All 3 algorithms on the unified model (Section A)
+      - Per-service separate XGBoost models (Section B)
+      - Augmentation impact: with vs. without T5 features (Section C)
 
     Returns a results dict with all metrics and scalability info.
     """
@@ -681,7 +674,7 @@ def run_all(client, n_workers: int,
     # ═════════════════════════════════════════════════════════════════════
     # SECTION B: SEPARATE PER-SERVICE MODELS (XGBoost)
     # Directly tests whether cross-service patterns (e.g. COVID-era Yellow
-    # → FHVHV shift from T3 EDA) improve prediction.
+    # -> FHVHV shift from T3 EDA) improve prediction.
     # ═════════════════════════════════════════════════════════════════════
     if HAS_XGB:
         print("\n" + "─" * 60, flush=True)
@@ -982,14 +975,14 @@ def make_cluster(n_workers: int, cores: int, mem: str, walltime: str):
     Each worker is spawned as its own sub-SLURM job by SLURMCluster.
     This is the standard Dask-on-HPC pattern.
 
-    IMPORTANT — processes=1 is mandatory:
+    processes=1 is mandatory:
       Without it, dask_jobqueue defaults to processes=cores (here: 4), which
       means each SLURM job spawns 4 Dask worker processes that share the node's
       memory and cores. scale(n) then means "n worker processes", not "n SLURM
       jobs", so scale(2) and scale(4) both resolve to 1 SLURM job and produce
       identical clusters — making the scalability sweep meaningless.
       With processes=1, every scale(n) spawns exactly n SLURM jobs, each with
-      1 worker, `cores` threads, and `mem` RAM, giving a true 2→4→8-node sweep.
+      1 worker, `cores` threads, and `mem` RAM, giving a true 2->4->8-node sweep.
     """
     cluster = SLURMCluster(
         queue     = "all",

@@ -1,6 +1,5 @@
 """
 T10: City-Wide Demand Forecasting — Distributed CPU+GPU Processing
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 Extends T7 by replacing every algorithm with its GPU-accelerated equivalent,
 using the same demand dataset (reads from the T7 cache) and identical feature
@@ -12,11 +11,11 @@ GPU Algorithms (all three required categories):
   3. cuML MBSGDRegressor        — GPU-accelerated mini-batch SGD (single GPU)
 
 Cluster:  LocalCUDACluster — all GPU workers on one SLURM node.
-          Scalability sweep: 1 → 2 → 4 GPUs (auto-detected from --gpus arg).
+          Scalability sweep: 1 -> 2 -> 4 GPUs (auto-detected from --gpus arg).
 
 Key differences vs T7:
-  - SLURMCluster → LocalCUDACluster (intra-node multi-GPU, no sub-jobs)
-  - numpy arrays → cupy-backed dask arrays for GPU workers
+  - SLURMCluster -> LocalCUDACluster (intra-node multi-GPU, no sub-jobs)
+  - numpy arrays -> cupy-backed dask arrays for GPU workers
   - pynvml used for VRAM tracking alongside psutil for CPU RAM
   - MBSGDRegressor replaces SGDRegressor (cuML has no partial_fit;
     all data fits in 32 GB V100S VRAM, so out-of-core is not required on GPU)
@@ -264,8 +263,8 @@ def run_cuml_lr(client, X_tr, y_tr, X_te, y_te,
     GPU workers using the same lbfgs-style solver as Dask-ML LR, but on GPU.
 
     Data pipeline:
-      numpy (CPU) → sklearn StandardScaler (CPU, reliable) →
-      scaled numpy → dask array → map_blocks(cp.asarray) → GPU workers
+      numpy (CPU) -> sklearn StandardScaler (CPU, reliable) ->
+      scaled numpy -> dask array -> map_blocks(cp.asarray) -> GPU workers
 
     The map_blocks(cp.asarray) step converts each CPU chunk to a CuPy array
     lazily on the assigned GPU worker, avoiding a single-GPU memory bottleneck.
@@ -331,7 +330,7 @@ def run_xgboost_gpu(client, X_tr, y_tr, X_te, y_te,
     and builds local trees; gradients are reduced across GPUs after each round.
 
     The interface is identical to the T7 CPU version — only device='cuda'
-    is changed. This demonstrates XGBoost's transparent CPU↔GPU portability.
+    is changed. This demonstrates XGBoost's transparent CPU<->GPU portability.
 
     Returns (metrics_dict, booster, y_pred_log).
     """
@@ -359,7 +358,7 @@ def run_xgboost_gpu(client, X_tr, y_tr, X_te, y_te,
         "min_child_weight": 5,
         "reg_lambda":       1.0,
         "tree_method":      "hist",
-        "device":           "cuda",   # ← only change vs T7 XGBoost
+        "device":           "cuda",   # <- only change vs T7 XGBoost
         "verbosity":        1,
     }
 
@@ -914,7 +913,7 @@ def make_plots(all_results: list):
 def main():
     parser = argparse.ArgumentParser(description="T10 — GPU Demand Forecasting")
     parser.add_argument("--gpus", type=int, nargs="+", default=None,
-                        help="GPU counts to sweep. Default: auto-detect (1 → max)")
+                        help="GPU counts to sweep. Default: auto-detect (1 -> max)")
     parser.add_argument("--skip-scalability", action="store_true",
                         help="Run only the maximum GPU count")
     args = parser.parse_args()
